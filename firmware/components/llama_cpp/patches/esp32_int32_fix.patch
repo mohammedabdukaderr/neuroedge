@@ -1,3 +1,21 @@
+diff --git a/src/llama-model-loader.cpp b/src/llama-model-loader.cpp
+index 4e65a45..d2e2e4b 100644
+--- a/src/llama-model-loader.cpp
++++ b/src/llama-model-loader.cpp
+@@ -121,6 +121,13 @@ namespace GGUFMeta {
+     template<> struct GKV_Base<int16_t     >: GKV_Base_Type<int16_t,      GGUF_TYPE_INT16,   gguf_get_val_i16 > {};
+     template<> struct GKV_Base<int32_t     >: GKV_Base_Type<int32_t,      GGUF_TYPE_INT32,   gguf_get_val_i32 > {};
+     template<> struct GKV_Base<int64_t     >: GKV_Base_Type<int64_t,      GGUF_TYPE_INT64,   gguf_get_val_i64 > {};
++    // ESP32/Xtensa: int32_t is long int, not int — add plain int specialization
++    template<> struct GKV_Base<int> {
++        static constexpr gguf_type gt = GGUF_TYPE_INT32;
++        static int getter(const gguf_context * ctx, const int kid) {
++            return (int)gguf_get_val_i32(ctx, kid);
++        }
++    };
+     template<> struct GKV_Base<float       >: GKV_Base_Type<float,        GGUF_TYPE_FLOAT32, gguf_get_val_f32 > {};
+     template<> struct GKV_Base<double      >: GKV_Base_Type<double,       GGUF_TYPE_FLOAT64, gguf_get_val_f64 > {};
+     template<> struct GKV_Base<const char *>: GKV_Base_Type<const char *, GGUF_TYPE_STRING,  gguf_get_val_str > {};
 diff --git a/src/llama-model.cpp b/src/llama-model.cpp
 index 9e2a13c..487dc40 100644
 --- a/src/llama-model.cpp
@@ -12,9 +30,18 @@ index 9e2a13c..487dc40 100644
                      }
  
 diff --git a/src/llama-sampler.cpp b/src/llama-sampler.cpp
-index 9bbc5db..6b5f7b2 100644
+index 9bbc5db..7c282af 100644
 --- a/src/llama-sampler.cpp
 +++ b/src/llama-sampler.cpp
+@@ -2745,7 +2745,7 @@ struct llama_sampler * llama_sampler_init_penalties(
+         float penalty_repeat,
+         float penalty_freq,
+         float penalty_present) {
+-    penalty_last_n = std::max(penalty_last_n, 0);
++    penalty_last_n = std::max(penalty_last_n, (int32_t)0);
+ 
+     const bool is_empty = (penalty_last_n == 0 || (penalty_repeat == 1.0f && penalty_freq == 0.0f && penalty_present == 0.0f));
+ 
 @@ -3862,7 +3862,7 @@ struct llama_perf_sampler_data llama_perf_sampler(const struct llama_sampler * c
      const auto * ctx = (const struct llama_sampler_chain *) chain->ctx;
  
