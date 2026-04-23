@@ -1,0 +1,81 @@
+# NeuroEdge firmware — ESP32-S3 sdkconfig defaults
+# Apply with: idf.py -DSDKCONFIG_DEFAULTS=sdkconfig.defaults build
+
+# -----------------------------------------------------------------------
+# Target & Flash
+# -----------------------------------------------------------------------
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# -----------------------------------------------------------------------
+# CPU
+# -----------------------------------------------------------------------
+CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240=y
+CONFIG_FREERTOS_UNICORE=n
+
+# -----------------------------------------------------------------------
+# PSRAM (Octal SPIRAM on ESP32-S3-WROOM-1)
+# -----------------------------------------------------------------------
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=131072
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+CONFIG_SPIRAM_ALLOW_NOINIT_SEG_EXTERNAL_MEMORY=y
+
+# Prefer PSRAM for large allocations
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=8192
+
+# -----------------------------------------------------------------------
+# Stack sizes — llama.cpp uses significant stack
+# -----------------------------------------------------------------------
+CONFIG_MAIN_TASK_STACK_SIZE=16384
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+
+# -----------------------------------------------------------------------
+# C++ exceptions — disabled to save 10-15 KB flash
+# -----------------------------------------------------------------------
+CONFIG_COMPILER_CXX_EXCEPTIONS=n
+CONFIG_COMPILER_CXX_RTTI=n
+
+# -----------------------------------------------------------------------
+# C++ standard — llama.cpp requires C++17
+# -----------------------------------------------------------------------
+CONFIG_COMPILER_CXX_STD_CPP17=y
+
+# -----------------------------------------------------------------------
+# Logging
+# -----------------------------------------------------------------------
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_LOG_COLORS=y
+CONFIG_LOG_TIMESTAMP_SOURCE_RTOS=y
+
+# -----------------------------------------------------------------------
+# UART
+# -----------------------------------------------------------------------
+CONFIG_ESP_CONSOLE_UART_NUM=0
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+
+# -----------------------------------------------------------------------
+# cJSON
+# -----------------------------------------------------------------------
+CONFIG_CJSON_ENABLE_CJSON=y
+
+# -----------------------------------------------------------------------
+# Power / Sleep
+# -----------------------------------------------------------------------
+CONFIG_PM_ENABLE=n    # Disable dynamic freq scaling during inference
+
+# -----------------------------------------------------------------------
+# NeuroEdge custom options
+# -----------------------------------------------------------------------
+CONFIG_NE_USE_LLAMA_CPP=y
+CONFIG_NE_UART_TX_PIN=17
+CONFIG_NE_UART_RX_PIN=18
+CONFIG_NE_UART_PORT=1

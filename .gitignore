@@ -1,0 +1,29 @@
+# Build artifacts
+firmware/build/
+firmware/sdkconfig
+firmware/dependencies.lock
+
+# ESP-IDF managed components (auto-downloaded)
+firmware/managed_components/
+
+# External deps — cloned by setup.sh, not committed
+firmware/components/llama_cpp/llama.cpp/
+firmware/components/tflite_micro/tflite-micro/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Model files
+*.gguf
+*.bin
+*.tflite
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

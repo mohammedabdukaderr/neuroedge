@@ -1,0 +1,30 @@
+# NeuroEdge 16 MB Flash Partition Table
+#
+# Offset layout (16 MB = 0x1000000):
+#
+#   0x000000 - 0x008000  Bootloader (32 KB, fixed by ROM)
+#   0x008000 - 0x009000  Partition table (4 KB)
+#   0x009000 - 0x00F000  NVS (24 KB)
+#   0x00F000 - 0x010000  PHY init (4 KB)
+#   0x010000 - 0x1F0000  App OTA_0 (1.9 MB)
+#   0x1F0000 - 0x3F0000  App OTA_1 (2 MB)  — for OTA updates
+#   0x3F0000 - 0x400000  OTA data  (64 KB)
+#   0x400000 - 0x500000  SPIFFS     (1 MB)  — config, labels, small assets
+#   0x500000 - 0xF00000  model_0   (10 MB)  — primary AI model (MobileNet/DS-CNN)
+#   0xF00000 - 0xFF0000  model_1   (984 KB) — secondary model slot
+#   0xFF0000 - 0x1000000 nvs_keys   (64 KB) — AES-128 eFuse-backed key store
+#
+# NOTE: TinyLlama Q4_K_M (~669 MB) requires external SPI NOR flash (W25Q512JV
+#       or similar, 64 MB+) connected on HSPI/VSPI. See docs/hardware.md.
+#       The model_0 partition here targets DS-CNN (1 MB) or MobileNet (~10 MB).
+#
+# Name,      Type, SubType, Offset,    Size,    Flags
+nvs,         data, nvs,     0x9000,    0x6000,
+phy_init,    data, phy,     0xF000,    0x1000,
+ota_0,       app,  ota_0,   0x10000,   0x1E0000,
+ota_1,       app,  ota_1,   0x1F0000,  0x200000,
+otadata,     data, ota,     0x3F0000,  0x2000,
+spiffs,      data, spiffs,  0x400000,  0x100000,
+model_0,     data, 0xFF,    0x500000,  0xA00000,
+model_1,     data, 0xFE,    0xF00000,  0xF0000,
+nvs_keys,    data, nvs_keys,0xFF0000,  0x10000,
