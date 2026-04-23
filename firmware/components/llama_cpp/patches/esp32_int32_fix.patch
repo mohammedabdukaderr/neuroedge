@@ -1,0 +1,26 @@
+diff --git a/src/llama-model.cpp b/src/llama-model.cpp
+index 9e2a13c..487dc40 100644
+--- a/src/llama-model.cpp
++++ b/src/llama-model.cpp
+@@ -8521,7 +8521,7 @@ llama_memory_i * llama_model::create_memory(const llama_memory_params & params,
+                                 return (int32_t) hparams.n_layer_kv_from_start - (hparams.is_swa(il) ? 2 : 1);
+                             }
+ 
+-                            return -1;
++                            return (int32_t)-1;
+                         };
+                     }
+ 
+diff --git a/src/llama-sampler.cpp b/src/llama-sampler.cpp
+index 9bbc5db..6b5f7b2 100644
+--- a/src/llama-sampler.cpp
++++ b/src/llama-sampler.cpp
+@@ -3862,7 +3862,7 @@ struct llama_perf_sampler_data llama_perf_sampler(const struct llama_sampler * c
+     const auto * ctx = (const struct llama_sampler_chain *) chain->ctx;
+ 
+     data.t_sample_ms = 1e-3 * ctx->t_sample_us;
+-    data.n_sample    = std::max(0, ctx->n_sample);
++    data.n_sample    = std::max((int32_t)0, ctx->n_sample);
+ 
+     return data;
+ }

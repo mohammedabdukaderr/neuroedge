@@ -13,6 +13,8 @@ echo "=== NeuroEdge Setup ==="
 if [ ! -d "$LLAMA_DIR/.git" ]; then
     echo "[1/4] Cloning llama.cpp..."
     git clone --depth 1 https://github.com/ggerganov/llama.cpp.git "$LLAMA_DIR"
+    echo "[1/4] Applying ESP32 compatibility patches..."
+    git -C "$LLAMA_DIR" apply "$REPO_ROOT/firmware/components/llama_cpp/patches/esp32_int32_fix.patch"
 else
     echo "[1/4] llama.cpp already present — skipping clone"
 fi
