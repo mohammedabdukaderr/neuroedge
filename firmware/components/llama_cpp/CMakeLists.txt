@@ -97,12 +97,10 @@ set(LLAMA_DEFS
 )
 
 # -----------------------------------------------------------------------
-# Compile flags
+# Compile flags — split C vs C++ (rtti/exceptions are C++ only)
 # -----------------------------------------------------------------------
-set(LLAMA_FLAGS
+set(LLAMA_FLAGS_COMMON
     -O2
-    -fno-exceptions
-    -fno-rtti
     -Wno-unused-function
     -Wno-deprecated-declarations
     -Wno-missing-field-initializers
@@ -110,6 +108,11 @@ set(LLAMA_FLAGS
     -Wno-error=format
     -Wno-format
     -Wno-error=return-type
+)
+
+set(LLAMA_FLAGS_CXX
+    -fno-exceptions
+    -fno-rtti
     -fpermissive
 )
 
@@ -130,7 +133,10 @@ idf_component_register(
 )
 
 target_compile_definitions(${COMPONENT_LIB} PRIVATE ${LLAMA_DEFS})
-target_compile_options(${COMPONENT_LIB}     PRIVATE ${LLAMA_FLAGS})
-target_compile_features(${COMPONENT_LIB}    PRIVATE cxx_std_17)
+target_compile_options(${COMPONENT_LIB} PRIVATE
+    ${LLAMA_FLAGS_COMMON}
+    $<$<COMPILE_LANGUAGE:CXX>:${LLAMA_FLAGS_CXX}>
+)
+target_compile_features(${COMPONENT_LIB} PRIVATE cxx_std_17)
 
 message(STATUS "NeuroEdge: llama_cpp configured for ESP32 (CPU-only, ${CMAKE_SYSTEM_PROCESSOR})")
